@@ -65,6 +65,3 @@ export function borrarTareas(id){
         }
     });
 }
-borrarTareas(3)
-.then(x => console.log(x))
-.catch(x => console.log(x))
