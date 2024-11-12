@@ -49,3 +49,22 @@ export function crearTareas(tarea, ){
         }
     });
 }
+export function borrarTareas(id){
+    return new Promise(async (ok,ko) => {
+        let conexion = conectar();
+        try{
+            let {count} = await conexion `DELETE from tareas WHERE id = ${id}`;
+            //Linea de la consulta - Inser method en tareas(column en base de datos), cuyo valor es el que te he dado y returna el id
+            conexion.end();
+            ok(count);
+        }
+        catch(error){
+            console.log(error)
+            ko({error: "Error en el servidor"})
+            //El rechazo debe de significar, error en base de datos - Pero al cliente dejarlo mas claro.
+        }
+    });
+}
+borrarTareas(3)
+.then(x => console.log(x))
+.catch(x => console.log(x))
