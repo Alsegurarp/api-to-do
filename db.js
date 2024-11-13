@@ -70,7 +70,7 @@ export function borrarTareas(id){
 
 //Crear function que permite cambiar el valor del campo "tarea" de un registro
 
-export function editarTareas(contenido, id){
+export function editarTareas(id, contenido){
     return new Promise(async (ok,ko) => {
         let conexion = conectar();
         try{

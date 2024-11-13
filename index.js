@@ -67,6 +67,33 @@ servidor.delete("/tareas/borrar/:id([0-9]+)", async (peticion, respuesta) => {
     //.params.id para que el servidor pueda leer el contenido que es dinámico.
 })
 
+//Con regex estamos diciendo que las id pueden ser del 0 al 9 sin limite de cantidades, ademas debe de ser operacion 1 o 2, si pones 3 = ERROR
+servidor.put("/tareas/actualizar/:id([0-9]+)/:operacion(1|2)",async (peticion, respuesta, siguiente) => {
+    //Otra manera de hacerlo sería con if( ) || else if( )
+    let operacion = Number(peticion.params.operacion);
+    let id = Number(peticion.params.id);
+    let {tarea} = peticion.body;
+    //Extraccion de los argumentos convertidos a numero y de la tarea, en caso que no exista tarea, entonces 'undefined'
+        let operaciones = [editarTareas, editarEstado];
+        //Se crea un array el cual contiene las functions que son probables a invocar
+        //Si quiero editar el estado SOLO necesito el id || Editar el texto NECESITO id + texto
+        if(operacion == 1 && (!tarea || tarea.trim() == "")){
+            return siguiente(true)}
+            //Operacion es desde el URL del cual nos queremos meter - editar estado y despues compara si está vacío ó no es una tarea
+            //Validamos todo lo que debemos validar, por lo que ahora solamente pasamos los argumentos que alguno de los 2 necesite
+            // JS si le pasas algo de mas y no lo necesita, entonces no le importa - JS invocará la function que necesitemos dependiendo la situacion
+            try{
+            let cantidad = await operaciones[operacion - 1](id, tarea)
+
+            respuesta.json({resultado : cantidad ? "ok" : "ko"})
+            }catch(error){
+                respuesta.status(500);
+                respuesta.json({error : "Error en el servidor"})
+            }
+
+})
+
+
 servidor.use((error, peticion, respuesta, siguiente) => {
     respuesta.status(400);
     respuesta.json({error : "error en la peticion "});
