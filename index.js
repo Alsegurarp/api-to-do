@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 //Todas las cosas que yo utilice dependen de las variables de entorno.
 dotenv.config(); //Lee el fichero .env y crea las variables de entorno - Esta leyendo que el puerto es el 4000 (Declarado en el fichero)
 //--------
-import express from "express";
-import { leerTareas, crearTareas, borrarTareas } from "./db.js";
+import express, { response } from "express";
+import { leerTareas, crearTareas, borrarTareas, editarTareas, editarEstado } from "./db.js";
 
 const servidor = express();
 //invocar express
@@ -29,7 +29,6 @@ try{
     let tareas = await leerTareas();
     respuesta.json(tareas);
     //Una vez que tenga las tareas, las mando en JSON, porque vienen en formato Array de objeto.
-
 }catch(error){
     respuesta.status(500);
     respuesta.json({error : "error en el servidor"})
@@ -53,9 +52,17 @@ try{
     respuesta.json({error : "Error en el servidor"})
 }
 })
-
-servidor.delete("/tareas/borrar/:id", async (peticion, respuesta) => {
-    respuesta.send("x cosa" + peticion.params.id);
+//Al nosotros tener un parametro en el id - Se puede validar con REGEX - 
+servidor.delete("/tareas/borrar/:id([0-9]+)", async (peticion, respuesta) => {
+        try{
+            let id = Number(peticion.params.id);
+            let count = await borrarTareas(id);
+            respuesta.json() = {resultado : count ? "ok" : "ko"}} 
+            catch(error){
+            respuesta.status(500);
+            respuesta.json({error : "Error en el servidor"})
+            }
+    
     //Haces una peticion con delete y despues te debe de responder esto
     //.params.id para que el servidor pueda leer el contenido que es dinámico.
 })
@@ -65,6 +72,13 @@ servidor.use((error, peticion, respuesta, siguiente) => {
     respuesta.json({error : "error en la peticion "});
 });
 //Middleware de gestor de errores - 
+
+//Creacion de ultimo middleware, incluso despues del ERROR 
+//Sin ninguna url - Si llega aqui, el recurso no existe, error 404
+servidor.use((peticion, respuesta) => {
+    respuesta.status(404);
+    respuesta.json({error : "Recurso no encontrado"});
+})
 
 
 
