@@ -3,10 +3,19 @@ import dotenv from "dotenv";
 dotenv.config(); //Lee el fichero .env y crea las variables de entorno - Esta leyendo que el puerto es el 4000 (Declarado en el fichero)
 //--------
 import express, { response } from "express";
+import cors from "cors"
 import { leerTareas, crearTareas, borrarTareas, editarTareas, editarEstado } from "./db.js";
 
 const servidor = express();
 //invocar express
+
+servidor.use(cors());
+//Recibe peticion y verifica si tienes permiso para hacer peticiones y para que esas peticiones sean cualquier tipo de metodo.
+//Las lineas adicionales de middlewares 
+
+
+servidor.use(express.json());
+//Linea mas importante, ya que lee los headers en las peticiones.
 
 servidor.use((peticion, respuesta, siguiente) => 
     {console.log("entramos al middleware");
@@ -15,7 +24,7 @@ servidor.use((peticion, respuesta, siguiente) =>
    //Una vez que he terminado debo invocar la function siguiente() - Una vez que termine te sales del middleware
 })
 
-servidor.use(express.json());
+
 
 if(process.env.PRUEBAS){
     //Crear un middleware que sirva un fichero que estan en pruebas
