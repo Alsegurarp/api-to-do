@@ -66,7 +66,7 @@ servidor.delete("/tareas/borrar/:id([0-9]+)", async (peticion, respuesta) => {
         try{
             let id = Number(peticion.params.id);
             let count = await borrarTareas(id);
-            respuesta.json() = {resultado : count ? "ok" : "ko"}} 
+            respuesta.json({resultado : count ? "ok" : "ko"})}
             catch(error){
             respuesta.status(500);
             respuesta.json({error : "Error en el servidor"})
@@ -93,7 +93,6 @@ servidor.put("/tareas/actualizar/:id([0-9]+)/:operacion(1|2)",async (peticion, r
             // JS si le pasas algo de mas y no lo necesita, entonces no le importa - JS invocará la function que necesitemos dependiendo la situacion
             try{
             let cantidad = await operaciones[operacion - 1](id, tarea)
-
             respuesta.json({resultado : cantidad ? "ok" : "ko"})
             }catch(error){
                 respuesta.status(500);
